@@ -13,3 +13,7 @@ public interface IProductService {
 
     List<Product> getAllProducts(); //ToDo : H/W for learners
 }
+
+//2 implementation of this interface
+//so we have use @Primary ---> Storageproductservice class...
+//so there will be no conflict

@@ -6,6 +6,7 @@ import com.productCatalougeService.productCatalougeService.models.Category;
 import com.productCatalougeService.productCatalougeService.models.Product;
 import com.productCatalougeService.productCatalougeService.services.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +15,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 //@RestController = @Controller + @ResponseBody
-// https://www.baeldung.com/spring-bean-scopes
 @RestController
 public class ProductController {
 
     @Autowired
+//  @Qualifier("fakeStoreProductService")  //if want to use that service for this controller
+// or we can use @Primary annotation on the service which we want to use for all controller
     IProductService productService;
 
 
@@ -36,8 +38,6 @@ public class ProductController {
         return new ResponseEntity<>(productDtos,HttpStatus.OK);
     }
 
-    //Read for @PathVariable , @RequestParam and @QueryParam
-    //https://www.baeldung.com/spring-requestparam-vs-pathvariable
     @GetMapping("/products/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable("id") Long productId) {
         // try {
@@ -49,12 +49,9 @@ public class ProductController {
 
         ProductDto productDto = from(product);
         return new ResponseEntity<>(productDto, HttpStatus.OK);
-//        }catch (IllegalArgumentException exception){
-//            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-//        }
     }
 
-    @PostMapping("products")
+    @PostMapping("/products")
     public ProductDto createProduct(@RequestBody ProductDto productDto) {
         Product product = from(productDto);
         Product output = productService.createProduct(product);
