@@ -11,7 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FakeStoreProductService implements IProductService{
@@ -21,6 +24,21 @@ public class FakeStoreProductService implements IProductService{
     @Autowired
     private FakeStoreApiClient fakeStoreApiClient;
 
+    @Override
+    public List<Product> getAllProducts() {
+        RestTemplate restTemplate=restTemplateBuilder.build();
+        ResponseEntity<FakeStoreProductDto[]> response=
+                restTemplate.getForEntity("https://fakestoreapi.com/products", FakeStoreProductDto[].class);
+
+        FakeStoreProductDto[] fakeStoreProductDto=response.getBody();
+
+        if(fakeStoreProductDto !=null && response.getStatusCode()==HttpStatus.OK){
+            return Arrays.stream(fakeStoreProductDto)
+                    .map(this::from)
+                    .collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
     @Override
     public Product getProductById(Long id) {
         RestTemplate restTemplate = restTemplateBuilder.build();
@@ -67,11 +85,6 @@ public class FakeStoreProductService implements IProductService{
         FakeStoreProductDto output = fakeStoreApiClient.replaceFakeStoreProduct(fakeStoreProductDtoInput,id);
         if(output==null) return null;
         return from(output);
-    }
-
-    @Override
-    public List<Product> getAllProducts() {
-        return null;
     }
 
     private FakeStoreProductDto from(Product product) {

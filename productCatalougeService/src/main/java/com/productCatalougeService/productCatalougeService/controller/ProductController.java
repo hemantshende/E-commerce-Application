@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 //@RestController = @Controller + @ResponseBody
 // https://www.baeldung.com/spring-bean-scopes
@@ -22,8 +23,17 @@ public class ProductController {
 
 
     @GetMapping("/products")
-    public List<ProductDto> getAllProducts() {
-        return null;
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        List<Product> products=productService.getAllProducts();
+
+        if(products==null ||products.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        List<ProductDto> productDtos=products.stream()
+                .map(this::from)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(productDtos,HttpStatus.OK);
     }
 
     //Read for @PathVariable , @RequestParam and @QueryParam
