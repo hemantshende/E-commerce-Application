@@ -33,7 +33,8 @@ public class AuthService implements IAuthService{
         User user=new User();
         user.setName(name);
         user.setEmail(email);
-        user.setPassword(password);
+//        user.setPassword(password);
+        user.setPassword(bCryptPasswordEncoder.encode(password)); //password security using bcryptPasswordEncoder
         user.setPhoneNumber(phoneNumber);
         return userRepo.save(user);
 
@@ -49,7 +50,11 @@ public class AuthService implements IAuthService{
         //
         User user=optionalUser.get();
 
-        if(!user.getPassword().equals(password)){
+//        if(!user.getPassword().equals(password)){
+//            throw  new PasswordMismatchException("plz check ur password again");
+//        }
+
+        if(!bCryptPasswordEncoder.matches(password, user.getPassword())){
             throw  new PasswordMismatchException("plz check ur password again");
         }
 
