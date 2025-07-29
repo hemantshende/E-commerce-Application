@@ -7,7 +7,7 @@ public interface IAuthService {
 
     public User signUp(String name, String email, String password, String phoneNumber);
 
-    Pair<User,String> login(String email, String password);
+    User login(String email, String password);
 
     Boolean validateToken(String token, Long userId);
 }
