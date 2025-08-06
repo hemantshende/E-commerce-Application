@@ -18,29 +18,25 @@ public class SearchproductService {
     @Autowired
     private ProductRepo productRepo;
 
-    public Page<Product> searchProduct(
-            String query,
-            Integer pageNumber,
-            Integer pageSize,
-            List<SortParam> sortParams){
+    public Page<Product> searchProduct(String query,Integer pageNumber,Integer pageSize,List<SortParam> sortParams){
 
         Sort sort=null;
 
         if(!sortParams.isEmpty()) {
             if(sortParams.get(0).getSortType().equals(SortType.ASC))
-                sort = sort.by(sortParams.get(0).getSortCriteria());
+                sort = Sort.by(sortParams.get(0).getSortCriteria());
             else
-                sort = sort.by(sortParams.get(0).getSortCriteria()).descending();
+                sort = Sort.by(sortParams.get(0).getSortCriteria()).descending();
 
             for(int i=1;i<sortParams.size();i++) {
                 if(sortParams.get(i).getSortType().equals(SortType.ASC))
-                    sort = sort.and(sort.by(sortParams.get(i).getSortCriteria()));
+                    sort = sort.and(Sort.by(sortParams.get(i).getSortCriteria()));
                 else
-                    sort = sort.and(sort.by(sortParams.get(i).getSortCriteria()).descending());
+                    sort = sort.and(Sort.by(sortParams.get(i).getSortCriteria()).descending());
 
             }
         }
 
-        return productRepo.findByNameEquals(query, PageRequest.of(pageNumber,pageSize,sort));
+        return productRepo.findByNameEquals(query,PageRequest.of(pageNumber,pageSize,sort));
     }
 }

@@ -12,5 +12,5 @@ public class SearchProductDto {
     private String query;
     private Integer pageNumber;
     private Integer pageSize;
-    private List<SortParam> sortParamList=new ArrayList<>();
+    private List<SortParam> sortParams=new ArrayList<>();
 }

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RequestMapping("/search")
 @RestController
 public class SearchController {
@@ -20,8 +22,12 @@ public class SearchController {
 
     @PostMapping("/products")
     public Page<Product> searchProducts(@RequestBody SearchProductDto searchRequestDto) {
-        return searchService.searchProduct(searchRequestDto.getQuery(),
+
+        return searchService.searchProduct(
+                searchRequestDto.getQuery(),
+                searchRequestDto.getPageNumber(),
                 searchRequestDto.getPageSize(),
-                searchRequestDto.getPageNumber(),searchRequestDto.getSortParamList());
+                searchRequestDto.getSortParams()
+        );
     }
 }
