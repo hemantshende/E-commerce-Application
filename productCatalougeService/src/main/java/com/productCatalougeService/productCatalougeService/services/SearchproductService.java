@@ -37,6 +37,6 @@ public class SearchproductService {
             }
         }
 
-        return productRepo.findByNameEquals(query,PageRequest.of(pageNumber,pageSize,sort));
+        return productRepo.findByNameEquals(query,PageRequest.of(pageNumber,pageSize));
     }
 }
