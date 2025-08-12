@@ -39,7 +39,7 @@ public class RazorpayPaymentGateway implements IpaymentGateway{
             JSONObject notes = new JSONObject();
             notes.put("policy_name", "Life Insurance Policy");
             paymentLinkRequest.put("notes", notes);
-            paymentLinkRequest.put("callback_url", "https://example-callback-url.com/");
+            paymentLinkRequest.put("callback_url", "https://example-callback-url.com/");  //we set redirect url here
             paymentLinkRequest.put("callback_method", "get");
 
             PaymentLink payment = razorpayClient.paymentLink.create(paymentLinkRequest);
