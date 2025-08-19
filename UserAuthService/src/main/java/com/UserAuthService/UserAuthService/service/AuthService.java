@@ -1,5 +1,7 @@
 package com.UserAuthService.UserAuthService.service;
 
+import com.UserAuthService.UserAuthService.Client_Kafka.KafkaProducerClient;
+import com.UserAuthService.UserAuthService.dto.EmailDto;
 import com.UserAuthService.UserAuthService.exceptions.PasswordMismatchException;
 import com.UserAuthService.UserAuthService.exceptions.UserAlreadyExistsException;
 import com.UserAuthService.UserAuthService.exceptions.UserNotSignedUpException;
@@ -8,6 +10,8 @@ import com.UserAuthService.UserAuthService.models.SessionState;
 import com.UserAuthService.UserAuthService.models.User;
 import com.UserAuthService.UserAuthService.repo.SessionRepo;
 import com.UserAuthService.UserAuthService.repo.UserRepo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -35,6 +39,12 @@ public class AuthService implements IAuthService{
     @Autowired
     private SecretKey secretKey;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private KafkaProducerClient kafkaProducerClient;
+
 
     @Override
     public User signUp(String name, String email, String password, String phoneNumber) {
@@ -51,8 +61,23 @@ public class AuthService implements IAuthService{
 //        user.setPassword(password);
         user.setPassword(bCryptPasswordEncoder.encode(password)); //password security using bcryptPasswordEncoder
         user.setPhoneNumber(phoneNumber);
-        return userRepo.save(user);
 
+        //Kafka---> send email..
+        try {
+            EmailDto emailDto=new EmailDto();
+            emailDto.setTo(email);
+            emailDto.setFrom("shendehc95@gmail.com");
+            emailDto.setSubject("welcome to our E-Commerce Application");
+            emailDto.setBody("Hope you will get best Experience");
+
+            String message = objectMapper.writeValueAsString(emailDto);
+
+            kafkaProducerClient.sendMessage("signup",message);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return userRepo.save(user);
     }
 
     @Override
