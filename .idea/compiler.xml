@@ -7,10 +7,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="EmailService" />
+        <module name="PaymentService (1)" />
+        <module name="UserAuthService (1)" />
         <module name="UserAuthService" />
-        <module name="PaymentService" />
         <module name="productCatalougeService" />
+        <module name="productCatalougeService (1)" />
+        <module name="EmailService" />
+        <module name="PaymentService" />
+        <module name="EmailService (1)" />
       </profile>
     </annotationProcessing>
   </component>
