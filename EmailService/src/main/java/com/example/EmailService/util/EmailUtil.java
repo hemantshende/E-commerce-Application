@@ -23,7 +23,7 @@ public class EmailUtil {
         message.setText(dto.getBody());
 
         mailSender.send(message);
-        System.out.println("mail sent successfully...!!!");
+        System.out.println("mail sent successfully...to"+dto.getTo()+"....!!");
     }
 
 
