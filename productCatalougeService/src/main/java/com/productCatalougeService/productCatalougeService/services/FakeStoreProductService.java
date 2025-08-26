@@ -6,6 +6,8 @@ import com.productCatalougeService.productCatalougeService.models.Category;
 import com.productCatalougeService.productCatalougeService.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,12 +19,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Primary
 public class FakeStoreProductService implements IProductService{
     @Autowired
     private RestTemplateBuilder restTemplateBuilder;
 
     @Autowired
     private FakeStoreApiClient fakeStoreApiClient;
+
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate; //we will implement it in getProductById()
 
     @Override
     public List<Product> getAllProducts() {
@@ -42,20 +48,31 @@ public class FakeStoreProductService implements IProductService{
     @Override
     public Product getProductById(Long id) {
         RestTemplate restTemplate = restTemplateBuilder.build();
-        ResponseEntity<FakeStoreProductDto> fakeStoreProductDtoResponseEntity =
-                restTemplate.getForEntity("https://fakestoreapi.com/products/{id}",
-                        FakeStoreProductDto.class,id);
 
-        FakeStoreProductDto fakeStoreProductDto =
-                fakeStoreProductDtoResponseEntity.getBody();
+        /*
+        Steps to implement Redis-->
+                1-check in Rediscache if found then return from redis
+                2-if not found in cache call fakestoreApi and store it in redis
+                3-return it
+        */
+        //step-1-->check in redis cache
+        FakeStoreProductDto fakeStoreProductDto=null;
+        fakeStoreProductDto= (FakeStoreProductDto) redisTemplate.opsForHash().get("PRODUCT",id);
+                //we decided "PRODUCT" ...we have given name...like kakfa topic
 
-        if(fakeStoreProductDto != null &&
-                fakeStoreProductDtoResponseEntity.getStatusCode() ==
-                        HttpStatus.valueOf(200)) {
+        //step-2-->if not found in redis cache
+        if(fakeStoreProductDto==null){
+            fakeStoreProductDto =
+                    restTemplate.getForEntity("https://fakestoreapi.com/products/{id}",
+                            FakeStoreProductDto.class,id).getBody();
+
+            redisTemplate.opsForHash().put("PRODUCT",id,fakeStoreProductDto);
+            return from(fakeStoreProductDto);
+        }else{
+        //step-3-->if found in redis cache
             return from(fakeStoreProductDto);
         }
-
-        return null;
+//        return null;
     }
 
     @Override
