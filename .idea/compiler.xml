@@ -16,14 +16,21 @@
         <module name="PaymentService" />
         <module name="EmailService (1)" />
       </profile>
+      <profile name="Annotation profile for CartService" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
+        </processorPath>
+        <module name="CartService" />
+      </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="EmailService" target="17" />
-      <module name="PaymentService" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="CartService" options="-parameters" />
       <module name="EmailService" options="-parameters" />
       <module name="PaymentService" options="-parameters" />
       <module name="UserAuthService" options="-parameters" />
